@@ -203,7 +203,7 @@
 
   async function loadCountries() {
     try {
-      const response = await fetch('/countries.txt');
+      const response = await fetch('countries.txt', { mode: 'no-cors' })
       if (!response.ok) throw new Error("Failed to load CSV file");
       const csvText = await response.text();
       countriesData = parseCSV(csvText);
