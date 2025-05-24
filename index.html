@@ -13,14 +13,8 @@
     background-color: #121212;
     color: #e0e0e0;
   }
-  h1 {
-    text-align: center;
-    color: #e0e0e0;
-  }
-  h2 {
-    text-align: center;
-    color: #888;
-  }
+  h1 { text-align: center; color: #e0e0e0; }
+  h2 { text-align: center; color: #888; }
   input[type="text"] {
     padding: 0.5rem;
     font-size: 1rem;
@@ -30,9 +24,7 @@
     color: #e0e0e0;
     border-radius: 4px;
   }
-  input[type="text"]::placeholder {
-    color: #888;
-  }
+  input[type="text"]::placeholder { color: #888; }
   button {
     padding: 0.5rem 1rem;
     font-size: 1rem;
@@ -44,9 +36,7 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-  button:hover {
-    background-color: #48a360;
-  }
+  button:hover { background-color: #48a360; }
   .history {
     margin-top: 1rem;
     border-top: 1px solid #333;
@@ -74,9 +64,7 @@
     cursor: pointer;
     border-radius: 4px;
   }
-  #resetBtn:hover {
-    background-color: #aaaaaa;
-  }
+  #resetBtn:hover { background-color: #aaaaaa; }
   label {
     display: block;
     margin: 1rem 0;
@@ -99,33 +87,33 @@
 </style>
 </head>
 <body>
-  <h1>AP HUG Wordle</h1>
-  <h2>Press new game after changing settings</h2>
+<h1>AP HUG Wordle</h1>
+<h2>Press new game after changing settings</h2>
 
-  <label>
-    <input type="checkbox" id="nicheToggle"/>
-    Allow niche countries (population under 10,000)
-  </label>
+<label>
+  <input type="checkbox" id="nicheToggle"/>
+  Allow niche countries (population under 10,000)
+</label>
 
-  <label>
-    Guesses:
-    <select id="difficultySelect">
-      <option value="5">mr-aitken-5</option>
-      <option value="10">nerd-10</option>
-      <option value="20" selected>normal-20</option>
-      <option value="40">dumb-40</option>
-      <option value="Infinity">dumber-unlimited</option>
-    </select>
-  </label>
+<label>
+  Guesses:
+  <select id="difficultySelect">
+    <option value="5">mr-aitken-5</option>
+    <option value="10">nerd-10</option>
+    <option value="20" selected>normal-20</option>
+    <option value="40">dumb-40</option>
+    <option value="Infinity">dumber-unlimited</option>
+  </select>
+</label>
 
-  <input id="guessInput" type="text" placeholder="Enter country name..." autocomplete="off" />
-  <button id="guessBtn">Guess</button>
-  <button id="resetBtn">New Game</button>
+<input id="guessInput" type="text" placeholder="Enter country name..." autocomplete="off" />
+<button id="guessBtn">Guess</button>
+<button id="resetBtn">New Game</button>
 
-  <div id="history" class="history"></div>
+<div id="history" class="history"></div>
 
 <script>
-  function parseCSV(text) {
+function parseCSV(text) {
   const lines = text.trim().split('\n');
   const headers = lines[0].split(',');
   const countries = {};
@@ -141,182 +129,194 @@
       NIR: parseFloat(row[5]),
       "Life expectancy": parseFloat(row[6]),
       "In tertiary": parseFloat(row[7]),
-      Physiological_density: parseFloat(row[8])
+      "Physiological density": parseFloat(row[8]),
+      Latitude: parseFloat(row[9]),
+      Longitude: parseFloat(row[10])
     };
   }
   return countries;
 }
 
 const tolerancesClose = {
-  HDI: 0.03,
-  GII: 0.05,
-  "GDP per capita": 0.10,
-  Population: 0.10,
-  NIR: 0.1,
-  "Life expectancy": 0.05,
-  "In tertiary": 0.10,
-  Physiological_density: 0.15,
+  HDI: 0.03, GII: 0.05, "GDP per capita": 0.10, Population: 0.10,
+  NIR: 0.1, "Life expectancy": 0.05, "In tertiary": 0.10,
+  "Physiological density": 0.15,
 };
 
 const tolerancesOff = {
-  HDI: 0.20,
-  GII: 0.15,
-  "GDP per capita": 0.30,
-  Population: 0.30,
-  NIR: 0.30,
-  "Life expectancy": 0.15,
-  "In tertiary": 0.30,
-  Physiological_density: 0.50,
+  HDI: 0.20, GII: 0.15, "GDP per capita": 0.30, Population: 0.30,
+  NIR: 0.30, "Life expectancy": 0.15, "In tertiary": 0.30,
+  "Physiological density": 0.50,
 };
 
-
-  function compareStat(secretValue, guessValue, tolClose, tolOff) {
-    if (guessValue === secretValue) {
-      return { symbol: "=", color: "blue" };
-    }
-    const lowerClose = secretValue * (1 - tolClose);
-    const upperClose = secretValue * (1 + tolClose);
-    const lowerOff = secretValue * (1 - tolOff);
-    const upperOff = secretValue * (1 + tolOff);
-    if (guessValue >= lowerClose && guessValue <= upperClose) {
-      return { symbol: "≈", color: "green" };
-    } else if (guessValue >= lowerOff && guessValue <= upperOff) {
-      return { symbol: guessValue > secretValue ? "↓" : "↑", color: "yellow" };
-    } else {
-      return { symbol: guessValue > secretValue ? "↓" : "↑", color: "red" };
-    }
+function compareStat(secretValue, guessValue, tolClose, tolOff) {
+  if (guessValue === secretValue) return { symbol: "=", color: "blue" };
+  const lowerClose = secretValue * (1 - tolClose);
+  const upperClose = secretValue * (1 + tolClose);
+  const lowerOff = secretValue * (1 - tolOff);
+  const upperOff = secretValue * (1 + tolOff);
+  if (guessValue >= lowerClose && guessValue <= upperClose) {
+    return { symbol: "≈", color: "green" };
+  } else if (guessValue >= lowerOff && guessValue <= upperOff) {
+    return { symbol: guessValue > secretValue ? "↓" : "↑", color: "yellow" };
+  } else {
+    return { symbol: guessValue > secretValue ? "↓" : "↑", color: "red" };
   }
+}
 
-  const guessInput = document.getElementById("guessInput");
-  const guessBtn = document.getElementById("guessBtn");
-  const resetBtn = document.getElementById("resetBtn");
-  const history = document.getElementById("history");
-  const nicheToggle = document.getElementById("nicheToggle");
-  const difficultySelect = document.getElementById("difficultySelect");
+function haversine(lat1, lon1, lat2, lon2) {
+  const toRad = x => x * Math.PI / 180;
+  const R = 6371;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) ** 2 +
+            Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+            Math.sin(dLon / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
 
-  let countriesData = {};
-  let secretCountry = null;
-  let secretStats = null;
-  let maxGuesses = 20;
-  let guessesMade = 0;
-  let gameOver = false;
-  let nicheAllowed = false;
+const guessInput = document.getElementById("guessInput");
+const guessBtn = document.getElementById("guessBtn");
+const resetBtn = document.getElementById("resetBtn");
+const history = document.getElementById("history");
+const nicheToggle = document.getElementById("nicheToggle");
+const difficultySelect = document.getElementById("difficultySelect");
 
-  async function loadCountries() {
-    try {
-      const response = await fetch('countries.txt', { mode: 'no-cors' })
-      if (!response.ok) throw new Error("Failed to load CSV file");
-      const csvText = await response.text();
-      countriesData = parseCSV(csvText);
-      startGame();
-    } catch (err) {
-      alert("Error loading countries data: " + err.message);
-    }
-  }
+let countriesData = {};
+let secretCountry = null;
+let secretStats = null;
+let maxGuesses = 20;
+let guessesMade = 0;
+let gameOver = false;
+let nicheAllowed = false;
 
-  function pickRandomCountry() {
-    const keys = Object.keys(countriesData);
-    let filteredKeys = nicheAllowed ? keys : keys.filter(k => countriesData[k].Population >= 10000);
-    if (filteredKeys.length === 0) {
-      alert("No countries available for current niche filter!");
-      return null;
-    }
-    return filteredKeys[Math.floor(Math.random() * filteredKeys.length)];
-  }
-
-  function startGame() {
-    history.innerHTML = "";
-    guessesMade = 0;
-    gameOver = false;
-    guessInput.disabled = false;
-    guessBtn.disabled = false;
-    guessInput.value = "";
-    guessInput.focus();
-    nicheAllowed = nicheToggle.checked;
-    maxGuesses = parseFloat(difficultySelect.value);
-    secretCountry = pickRandomCountry();
-    if (!secretCountry) {
-      secretCountry = Object.keys(countriesData)[0];
-    }
-    secretStats = countriesData[secretCountry];
-  }
-
-  function displayColoredText(line) {
-    const colorMatch = line.match(/\((blue|green|yellow|red)\)$/);
-    let color = "inherit";
-    let text = line;
-    if (colorMatch) {
-      color = colorMatch[1];
-      text = line.replace(/\s*\(.+\)$/, "");
-    }
-    const span = document.createElement("span");
-    span.textContent = text;
-    span.style.color = color;
-    return span;
-  }
-
-  guessBtn.addEventListener("click", () => {
-    if (gameOver) return;
-    const rawGuess = guessInput.value.trim();
-    if (!rawGuess) return;
-    const guessKey = Object.keys(countriesData).find(
-      c => c.toLowerCase() === rawGuess.toLowerCase()
-    );
-    if (!guessKey) {
-      alert("Country not in database. Try again.");
-      return;
-    }
-    guessesMade++;
-    const guessStats = countriesData[guessKey];
-    let outputLines = [];
-    outputLines.push(`Guess ${guessesMade}: ${guessKey}`);
-    for (const stat in secretStats) {
-      const { symbol, color } = compareStat(
-        secretStats[stat],
-        guessStats[stat],
-        tolerancesClose[stat],
-        tolerancesOff[stat]
-      );
-      outputLines.push(`${stat}: ${symbol} ${guessStats[stat]} (${color})`);
-    }
-    if (guessKey === secretCountry) {
-      outputLines.push(`Correct! You guessed ${secretCountry}! 🎉`);
-      gameOver = true;
-      guessInput.disabled = true;
-      guessBtn.disabled = true;
-    } else if (guessesMade >= maxGuesses) {
-      outputLines.push(`Game Over! You've used all ${maxGuesses} guesses. The secret country was ${secretCountry}.`);
-      gameOver = true;
-      guessInput.disabled = true;
-      guessBtn.disabled = true;
-    }
-    const histItem = document.createElement("div");
-    histItem.classList.add("history-item");
-    outputLines.forEach(line => {
-      const el = displayColoredText(line);
-      histItem.appendChild(el);
-      histItem.appendChild(document.createElement("br"));
-    });
-    history.insertBefore(histItem, history.firstChild);
-    guessInput.value = "";
-    guessInput.focus();
-  });
-
-  resetBtn.addEventListener("click", () => {
+async function loadCountries() {
+  try {
+    const response = await fetch('countries.txt');
+    if (!response.ok) throw new Error("Failed to load CSV file");
+    const csvText = await response.text();
+    countriesData = parseCSV(csvText);
     startGame();
-  });
+  } catch (err) {
+    alert("Error loading countries data: " + err.message);
+  }
+}
 
-  guessInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") {
-      guessBtn.click();
+function pickRandomCountry() {
+  const keys = Object.keys(countriesData);
+  let filteredKeys = nicheAllowed ? keys : keys.filter(k => countriesData[k].Population >= 10000);
+  return filteredKeys[Math.floor(Math.random() * filteredKeys.length)];
+}
+
+function startGame() {
+  history.innerHTML = "";
+  guessesMade = 0;
+  gameOver = false;
+  guessInput.disabled = false;
+  guessBtn.disabled = false;
+  guessInput.value = "";
+  guessInput.focus();
+  nicheAllowed = nicheToggle.checked;
+  maxGuesses = parseFloat(difficultySelect.value);
+  secretCountry = pickRandomCountry();
+  secretStats = countriesData[secretCountry];
+}
+
+function displayColoredText(line) {
+  const colorMatch = line.match(/\((blue|green|yellow|red)\)$/);
+  let color = "inherit";
+  let text = line;
+  if (colorMatch) {
+    color = colorMatch[1];
+    text = line.replace(/\s*\(.+\)$/, "");
+  }
+  const span = document.createElement("span");
+  span.textContent = text;
+  span.style.color = color;
+  return span;
+}
+
+guessBtn.addEventListener("click", () => {
+  if (gameOver) return;
+  const rawGuess = guessInput.value.trim();
+  if (!rawGuess) return;
+  const guessKey = Object.keys(countriesData).find(
+    c => c.toLowerCase() === rawGuess.toLowerCase()
+  );
+  if (!guessKey) {
+    alert("Country not in database. Try again.");
+    return;
+  }
+  guessesMade++;
+  const guessStats = countriesData[guessKey];
+  let outputLines = [];
+  outputLines.push(`Guess ${guessesMade}: ${guessKey}`);
+  for (const stat in secretStats) {
+    if (stat === "Latitude" || stat === "Longitude") continue;
+    const { symbol, color } = compareStat(
+      secretStats[stat],
+      guessStats[stat],
+      tolerancesClose[stat],
+      tolerancesOff[stat]
+    );
+    outputLines.push(`${stat}: ${symbol} ${guessStats[stat]} (${color})`);
+  }
+
+  const lat1 = guessStats.Latitude;
+  const lon1 = guessStats.Longitude;
+  const lat2 = secretStats.Latitude;
+  const lon2 = secretStats.Longitude;
+
+  if ([lat1, lon1, lat2, lon2].some(v => isNaN(v))) {
+    outputLines.push(`Distance: Unknown (Invalid coordinates) (red)`);
+  } else {
+    const distance = haversine(lat1, lon1, lat2, lon2);
+    let distanceColor = "red";
+    let distanceText = "Far";
+    if (distance < 2000) {
+      distanceColor = "green";
+      distanceText = "Close";
+    } else if (distance < 5000) {
+      distanceColor = "yellow";
+      distanceText = "Medium";
     }
-  });
+    outputLines.push(`Distance: ${distanceText} (${distanceColor})`);
+  }
 
-  nicheToggle.addEventListener("change", () => {
-    nicheAllowed = nicheToggle.checked;
-  });
+  if (guessKey === secretCountry) {
+    outputLines.push(`Correct! You guessed ${secretCountry}! 🎉`);
+    gameOver = true;
+    guessInput.disabled = true;
+    guessBtn.disabled = true;
+  } else if (guessesMade >= maxGuesses) {
+    outputLines.push(`Game Over! The secret country was ${secretCountry}.`);
+    gameOver = true;
+    guessInput.disabled = true;
+    guessBtn.disabled = true;
+  }
 
-  loadCountries();
+  const histItem = document.createElement("div");
+  histItem.classList.add("history-item");
+  outputLines.forEach(line => {
+    const el = displayColoredText(line);
+    histItem.appendChild(el);
+    histItem.appendChild(document.createElement("br"));
+  });
+  history.insertBefore(histItem, history.firstChild);
+  guessInput.value = "";
+  guessInput.focus();
+});
+
+resetBtn.addEventListener("click", startGame);
+guessInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") guessBtn.click();
+});
+nicheToggle.addEventListener("change", () => {
+  nicheAllowed = nicheToggle.checked;
+});
+
+loadCountries();
 </script>
 </body>
 </html>
