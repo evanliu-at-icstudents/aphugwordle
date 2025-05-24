@@ -126,48 +126,49 @@
 
 <script>
   function parseCSV(text) {
-    const lines = text.trim().split('\n');
-    const headers = lines[0].split(',');
-    const countries = {};
-    for(let i = 1; i < lines.length; i++) {
-      const row = lines[i].split(',');
-      if(row.length < headers.length) continue;
-      const country = row[0];
-      countries[country] = {
-        HDI: parseFloat(row[1]),
-        GII: parseFloat(row[2]),
-        GDP_per_capita: parseFloat(row[3]),
-        Population: parseInt(row[4], 10),
-        NIR: parseFloat(row[5]),
-        Life_expectancy: parseFloat(row[6]),
-        "%in_tertiary": parseFloat(row[7]),
-        Physiological_density: parseFloat(row[8])
-      };
-    }
-    return countries;
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',');
+  const countries = {};
+  for (let i = 1; i < lines.length; i++) {
+    const row = lines[i].split(',');
+    if (row.length < headers.length) continue;
+    const country = row[0];
+    countries[country] = {
+      HDI: parseFloat(row[1]),
+      GII: parseFloat(row[2]),
+      "GDP per capita": parseFloat(row[3]),
+      Population: parseInt(row[4], 10),
+      NIR: parseFloat(row[5]),
+      "Life expectancy": parseFloat(row[6]),
+      "In tertiary": parseFloat(row[7]),
+      Physiological_density: parseFloat(row[8])
+    };
   }
+  return countries;
+}
 
-  const tolerancesClose = {
-    HDI: 0.03,
-    GII: 0.05,
-    GDP_per_capita: 0.10,
-    Population: 0.10,
-    NIR: 0.1,
-    Life_expectancy: 0.05,
-    "%in_tertiary": 0.10,
-    Physiological_density: 0.15,
-  };
+const tolerancesClose = {
+  HDI: 0.03,
+  GII: 0.05,
+  "GDP per capita": 0.10,
+  Population: 0.10,
+  NIR: 0.1,
+  "Life expectancy": 0.05,
+  "In tertiary": 0.10,
+  Physiological_density: 0.15,
+};
 
-  const tolerancesOff = {
-    HDI: 0.20,
-    GII: 0.15,
-    GDP_per_capita: 0.30,
-    Population: 0.30,
-    NIR: 0.30,
-    Life_expectancy: 0.15,
-    "%in_tertiary": 0.30,
-    Physiological_density: 0.50,
-  };
+const tolerancesOff = {
+  HDI: 0.20,
+  GII: 0.15,
+  "GDP per capita": 0.30,
+  Population: 0.30,
+  NIR: 0.30,
+  "Life expectancy": 0.15,
+  "In tertiary": 0.30,
+  Physiological_density: 0.50,
+};
+
 
   function compareStat(secretValue, guessValue, tolClose, tolOff) {
     if (guessValue === secretValue) {
